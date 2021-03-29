@@ -5,7 +5,7 @@ exports.up = function(knex) {
       table.string('question')
       table.string('answer')
       table.string('type')
-      table.specificType('options','ARRAY')
+      table.specificType('options','text[]')
     })
 };
 
