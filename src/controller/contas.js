@@ -3,7 +3,7 @@ const connection = require('../database/connection')
 module.exports = {
     async index(req,res){
         await connection('contas')
-            .select('id','problem','answer',connection.raw('ARRAY_AGG(options) as options'))
+            .select('id','question','type','answer',connection.raw('ARRAY_AGG(options) as options'))
             .then(response=>{
                 return res.status(200).json(response);
             })
