@@ -5,8 +5,8 @@ const Questions = require('./controller/contas')
 
 routes.get('/',(req,res)=>{
     return res.status(200).json({
-        version: 1,
-        message: "Development"
+        version: 1.2,
+        message: "Created heroku app "
     });
 });
 
