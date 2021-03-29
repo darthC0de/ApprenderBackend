@@ -3,7 +3,7 @@ const connection = require('../database/connection')
 module.exports = {
     async index(req,res){
         await connection('contas')
-            .select('*')
+            .select('problem','answer',knex.raw('ARRAY_AGG(options) as options'))
             .then(response=>{
                 return res.status(200).json(response);
             })
