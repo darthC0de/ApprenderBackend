@@ -1,7 +1,7 @@
 const express = require('express');
 const routes = express.Router();
 
-const Questions = require('./controller/contas')
+const Questions = require('./controller/questions')
 
 routes.get('/',(req,res)=>{
     return res.status(200).json({
