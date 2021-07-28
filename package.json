@@ -28,5 +28,17 @@
   "devDependencies": {
     "nodemon": "^2.0.7",
     "sqlite3": "^5.0.2"
+  },
+  "renovate":{
+    "branchPrefix": "[Updates]",
+    "packageRules": [
+      {
+        "updateTypes": ["minor", "patch", "pin", "digest"],
+        "automerge": true
+      }
+    ],
+    "extends": [
+      "config:base"
+    ]
   }
 }
