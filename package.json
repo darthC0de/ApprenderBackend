@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "nodemon": "2.0.12",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "5.0.2"
   },
   "renovate":{
     "branchPrefix": "updates/",
