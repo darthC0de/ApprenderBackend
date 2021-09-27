@@ -28,48 +28,5 @@
   "devDependencies": {
     "nodemon": "2.0.13",
     "sqlite3": "5.0.2"
-  },
-  "renovate":{
-    "branchPrefix": "updates/",
-    "packageRules": [
-      {
-        "updateTypes": [
-          "minor",
-          "patch",
-          "pin",
-          "digest"
-        ],
-        "automerge": true
-      },
-      {
-        "updateTypes": [
-          "major"
-        ],
-        "automerge": false
-      }
-    ],
-    "assignAutomerge": true,
-    "assignees": [
-      "rodcordeiro",
-      "JuniorAlvess"
-    ],
-    "labels": [
-      "dependencies"
-    ],
-    "recreateClosed": true,
-    "rebaseWhen": "conflicted",
-    "vulnerabilityAlerts": {
-      "labels": [
-        "security"
-      ],
-      "assignees": [
-        "@rodcordeiro"
-      ]
-    },
-    "extends": [
-      "config:base",
-      ":dependencyDashboard",
-      "github>whitesource/merge-confidence:beta"
-    ]
   }
 }
