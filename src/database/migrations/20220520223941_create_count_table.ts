@@ -9,8 +9,16 @@ export async function up(knex: Knex): Promise<void> {
     table.specificType('options', 'text[]');
     table.string('created_by').notNullable();
     table.string('updated_by');
-    table.foreign('created_by').references('users.id');
-    table.foreign('updated_by').references('users.id');
+    table
+      .foreign('created_by')
+      .references('users.id')
+      .onUpdate('SET NULL')
+      .onDelete('SET NULL');
+    table
+      .foreign('updated_by')
+      .references('users.id')
+      .onUpdate('SET NULL')
+      .onDelete('SET NULL');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at');
   });

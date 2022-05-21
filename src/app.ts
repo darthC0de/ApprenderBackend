@@ -1,11 +1,11 @@
-import { config as env } from "dotenv";
+import { config as env } from 'dotenv';
 env();
 
-import express from "express";
-import helmet from "helmet";
-import cors from "cors";
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
 
-import routes from "./routes";
+import routes from './routes';
 
 const app = express();
 
