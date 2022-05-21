@@ -1,4 +1,8 @@
-node_modules
+node_modules/
+__coverage__/
+build/
+*.zip
+logs/
+yarn*log
 .env
 *.sqlite3
-
