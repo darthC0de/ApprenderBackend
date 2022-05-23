@@ -8,8 +8,7 @@ on:
     branches: [master]
   schedule:
     - cron: '0 3 * * 1'
-env:
-  NODE_ENV: development
+
 jobs:
   CodeQuality:
     name: Analyze
