@@ -1,4 +1,4 @@
-export interface iFieldError {
+export interface IFieldError {
   campo: string;
   mensagem: string;
 }

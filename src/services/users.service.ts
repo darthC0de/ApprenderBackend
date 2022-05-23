@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { Encrypt } from '../utils';
 import { Auth } from '../middlewares';
 
-export interface iUser {
+export interface IUser {
   id?: any;
   name?: string;
   username: string;
@@ -16,7 +16,7 @@ export interface iUser {
 }
 export class UserService {
   public async listAll() {
-    return new Promise<iUser[]>(async (resolve, reject) => {
+    return new Promise<IUser[]>(async (resolve, reject) => {
       await Conn('users')
         .select(
           'id',
@@ -37,7 +37,7 @@ export class UserService {
     });
   }
   public async findById(id: string) {
-    return new Promise<iUser>(async (resolve, reject) => {
+    return new Promise<IUser>(async (resolve, reject) => {
       await Conn('users')
         .select(
           'id',
@@ -60,7 +60,7 @@ export class UserService {
     });
   }
   public async findByUser(username: string) {
-    return new Promise<iUser>(async (resolve, reject) => {
+    return new Promise<IUser>(async (resolve, reject) => {
       await Conn('users')
         .select(
           'id',
@@ -90,7 +90,7 @@ export class UserService {
     role?: string,
     avatar?: string,
   ) {
-    return new Promise<iUser>(async (resolve, reject) => {
+    return new Promise<IUser>(async (resolve, reject) => {
       try {
         const user = await Conn('users')
           .select('*')
@@ -113,9 +113,9 @@ export class UserService {
             email,
             password,
             avatar,
-            role
+            role,
           })
-          .then(async (response: any) => {
+          .then(async (_response: any) => {
             const details = await this.findById(id);
             resolve(details);
           })
@@ -132,7 +132,7 @@ export class UserService {
     email?: string,
     password?: string,
     avatar?: string,
-    role?:string
+    role?: string,
   ) {
     return new Promise<any>(async (resolve, reject) => {
       try {
@@ -217,6 +217,9 @@ export class UserService {
           const isValid: boolean = await compare(password, user.password).then(
             response => response,
           );
+          if (!isValid) {
+            return reject('Invalid username or password');
+          }
           let token = Auth.signin(user.id, username);
           resolve({
             id: user.id,

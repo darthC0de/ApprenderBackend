@@ -1,8 +1,8 @@
-import { iFieldError } from './interfaces';
+import { IFieldError } from './interfaces';
 import { createLogger, format, transports, Logger } from 'winston';
 import 'winston-daily-rotate-file';
 
-export interface iFieldValidation<T> {
+export interface IFieldValidation<T> {
   /** Field name for validation */
   name: string;
   /** Field for type validation.
@@ -29,11 +29,11 @@ export interface iFieldValidation<T> {
  * @param {any} data
  */
 export function validateFields<T>(
-  fields: iFieldValidation<T>[],
+  fields: IFieldValidation<T>[],
   data: any,
-): { hasMissing: boolean; errors?: iFieldError[] } {
-  const errors: iFieldError[] = [];
-  fields.forEach((field: iFieldValidation<T>) => {
+): { hasMissing: boolean; errors?: IFieldError[] } {
+  const errors: IFieldError[] = [];
+  fields.forEach((field: IFieldValidation<T>) => {
     const required = field.required === false ? field.required : true;
 
     if (!data[field.name] && required === true) {

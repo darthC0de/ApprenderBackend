@@ -1,6 +1,5 @@
 import { Conn } from '../database';
 import { v4 as uuid } from 'uuid';
-import { Encrypt } from '../utils';
 import { UserService } from './users.service';
 
 export interface ITypes {

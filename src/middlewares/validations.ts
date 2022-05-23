@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { check, validationResult } from 'express-validator';
 
 const validateParams = (req: Request, res: Response, next: NextFunction) => {
-  interface iErrors {
+  interface IErrors {
     value: string;
     msg: string;
     param: string;
@@ -13,7 +13,7 @@ const validateParams = (req: Request, res: Response, next: NextFunction) => {
     console.log(errors);
     return res.status(400).json(
       // @ts-ignore
-      errors.array().map((error: iErrors) => ({
+      errors.array().map((error: IErrors) => ({
         msg: error.msg,
         param: error.param,
       })),
