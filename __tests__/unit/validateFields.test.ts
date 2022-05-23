@@ -1,6 +1,6 @@
-import { validateFields, iFieldValidation } from "../../src/utils";
+import { validateFields, IFieldValidation } from "../../src/utils";
 it("Should validate string field", () => {
-  const fields: iFieldValidation<any>[] = [
+  const fields: IFieldValidation<any>[] = [
     {
       name: "name",
       type: "string",
@@ -15,7 +15,7 @@ it("Should validate string field", () => {
 });
 
 it("Should validate number field", () => {
-  const fields: iFieldValidation<any>[] = [
+  const fields: IFieldValidation<any>[] = [
     {
       name: "age",
       type: "number",
@@ -29,7 +29,7 @@ it("Should validate number field", () => {
   expect(validation.hasMissing).toBe(false);
 });
 it("Should validate required field", () => {
-  const fields: iFieldValidation<any>[] = [
+  const fields: IFieldValidation<any>[] = [
     {
       name: "name",
       type: "string",
@@ -43,7 +43,7 @@ it("Should validate required field", () => {
 });
 
 it("Should ignore non required field", () => {
-  const fields: iFieldValidation<any>[] = [
+  const fields: IFieldValidation<any>[] = [
     {
       name: "name",
       type: "string",
