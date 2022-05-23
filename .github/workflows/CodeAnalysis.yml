@@ -10,7 +10,7 @@ on:
     - cron: '0 3 * * 1'
 
 jobs:
-  analyze:
+  CodeQuality:
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
@@ -37,12 +37,11 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
-
-  build:
+  BuildValidation:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x] # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [14.x, 16.x] # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -51,3 +50,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
       - run: yarn build
+  Audit:
+    steps:
+      - name: Run NPM audit and create PR with result
+        uses: luisfontes19/npm-audit-action@v0.1.0
+        with:
+          project-path: '.'
+          fix: true # To create pull requests with npm audit fix
+          package-lock-only: false
+          git-branch: fix/npm-audit-action
+          force: true
+          github-token: ${{ secrets.GITHUB_TOKEN }} # github token to create the pull request. Here you need to have a secret named TOKEN.
