@@ -1,6 +1,6 @@
 import { Conn } from '../database';
 import { v4 as uuid } from 'uuid';
-import { Encrypt, logger } from '../utils';
+import { Encrypt } from '../utils';
 import { Auth } from '../middlewares';
 
 export interface iUser {
@@ -9,6 +9,7 @@ export interface iUser {
   username: string;
   email?: string;
   avatar?: string;
+  role?: string;
   password: string;
   created_at?: Date;
   updated_at?: Date;
@@ -23,6 +24,7 @@ export class UserService {
           'username',
           'email',
           'avatar',
+          'role',
           'created_at',
           'updated_at',
         )
@@ -43,6 +45,7 @@ export class UserService {
           'username',
           'email',
           'avatar',
+          'role',
           'created_at',
           'updated_at',
         )
@@ -64,6 +67,7 @@ export class UserService {
           'name',
           'username',
           'email',
+          'role',
           'avatar',
           'created_at',
           'updated_at',
@@ -83,6 +87,7 @@ export class UserService {
     username: string,
     email: string,
     password: string,
+    role?: string,
     avatar?: string,
   ) {
     return new Promise<iUser>(async (resolve, reject) => {
@@ -108,6 +113,7 @@ export class UserService {
             email,
             password,
             avatar,
+            role
           })
           .then(async (response: any) => {
             const details = await this.findById(id);
@@ -126,15 +132,27 @@ export class UserService {
     email?: string,
     password?: string,
     avatar?: string,
+    role?:string
   ) {
     return new Promise<any>(async (resolve, reject) => {
       try {
         const user = await Conn('users')
-          .select('*')
+          .select(
+            'id',
+            'name',
+            'username',
+            'email',
+            'avatar',
+            'created_at',
+            'updated_at',
+          )
           .where({ id })
-          .then((response: any) => response)
-          .catch((err: Error) => reject(err.message));
-        if (!user || !user.length) {
+          .first()
+          .then((response: any) => {
+            return response;
+          });
+
+        if (!user) {
           return reject('User not found');
         }
         const updated_at = new Date().toISOString();
@@ -145,12 +163,17 @@ export class UserService {
             email,
             password,
             avatar,
+            role,
             updated_at,
-            updated_by: id,
           })
+          .where({ id })
           .then((_response: any) => resolve(''))
-          .catch((err: Error) => reject(err.message));
+          .catch((err: Error) => {
+            console.log({ err });
+            return reject(err.message);
+          });
       } catch (err) {
+        console.log({ err });
         reject(err);
       }
     });
@@ -182,12 +205,12 @@ export class UserService {
       async (resolve, reject) => {
         try {
           const user = await Conn('users')
-            .select('username', 'password')
-            .first()
+            .select('id', 'username', 'password')
             .where({ username })
+            .first()
             .then((response: any) => response)
             .catch((err: Error) => reject(err.message));
-          if (!user || !user.length) {
+          if (!user) {
             return reject('Invalid username');
           }
           const { compare } = new Encrypt();
@@ -200,6 +223,7 @@ export class UserService {
             token,
           });
         } catch (err) {
+          console.log({ err });
           reject(err);
         }
       },

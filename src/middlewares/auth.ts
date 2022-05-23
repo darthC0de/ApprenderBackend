@@ -19,7 +19,7 @@ export function isAuthenticated(
       message: 'You must provide a valid Bearer authentication token',
     });
   }
-  const decoded: any = jwt.verify(
+  jwt.verify(
     token,
     String(process.env.APP_SECRET),
     // @ts-ignore
