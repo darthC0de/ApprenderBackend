@@ -9,7 +9,6 @@ import {
   QuestionController,
 } from './controllers';
 
-
 routes.get('/', (_req: Request, res: Response) => {
   return res.status(200).json({
     version,

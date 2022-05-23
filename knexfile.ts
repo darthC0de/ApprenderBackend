@@ -10,7 +10,7 @@ export default {
     migrations: {
       directory: './src/database/migrations',
     },
-    seeds:{
+    seeds: {
       directory: './src/database/seeds',
     },
     useNullAsDefault: true,
@@ -24,7 +24,7 @@ export default {
     migrations: {
       directory: './src/database/migrations',
     },
-    seeds:{
+    seeds: {
       directory: './src/database/seeds',
     },
     useNullAsDefault: true,
