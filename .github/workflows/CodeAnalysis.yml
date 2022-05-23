@@ -61,6 +61,7 @@ jobs:
           project-path: '.'
           fix: true # To create pull requests with npm audit fix
           package-lock-only: false
+          only: prod
           git-branch: fix/npm-audit-action
           force: true
           github-token: ${{ secrets.GITHUB_TOKEN }} # github token to create the pull request. Here you need to have a secret named TOKEN.
