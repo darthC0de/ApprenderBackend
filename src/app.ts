@@ -16,7 +16,10 @@ const limiter = RateLimit({
 // apply rate limiter to all requests
 app.use(express.json());
 app.use(cors());
-app.use(limiter);
+if (['development', 'test'].indexOf(String(process.env.NODE_ENV)) !== -1) {
+  app.use(limiter);
+}
+
 app.use(helmet.hidePoweredBy());
 app.use(routes);
 

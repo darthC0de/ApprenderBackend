@@ -2,6 +2,7 @@ import { Conn } from '../database';
 import { v4 as uuid } from 'uuid';
 import { Encrypt } from '../utils';
 import { Auth } from '../middlewares';
+import { ParameterService } from './';
 
 export interface IUser {
   id?: any;
@@ -91,7 +92,9 @@ export class UserService {
     avatar?: string,
   ) {
     return new Promise<IUser>(async (resolve, reject) => {
+      const parameters = new ParameterService();
       try {
+        let userRole: string;
         const user = await Conn('users')
           .select('*')
           .where('email', email)
@@ -104,6 +107,7 @@ export class UserService {
         if (user) {
           return reject('usuário já cadastrado');
         }
+
         const id = uuid();
         await Conn('users')
           .insert({
@@ -113,7 +117,13 @@ export class UserService {
             email,
             password,
             avatar,
-            role,
+            role: role
+              ? role
+              : await parameters
+                  .findByDescription('Default user role')
+                  .then(response => {
+                    userRole = String(response.value);
+                  }),
           })
           .then(async (_response: any) => {
             const details = await this.findById(id);
@@ -201,11 +211,11 @@ export class UserService {
     });
   }
   public async authenticate(username: string, password: string) {
-    return new Promise<{ id: string; token: string }>(
+    return new Promise<{ id: string; token: string; role: string }>(
       async (resolve, reject) => {
         try {
           const user = await Conn('users')
-            .select('id', 'username', 'password')
+            .select('id', 'username', 'password', 'role')
             .where({ username })
             .first()
             .then((response: any) => response)
@@ -213,17 +223,21 @@ export class UserService {
           if (!user) {
             return reject('Invalid username');
           }
-          const { compare } = new Encrypt();
-          const isValid: boolean = await compare(password, user.password).then(
-            response => response,
-          );
+          const cript = new Encrypt();
+          const isValid: boolean = await cript
+            .compare(password, user.password)
+            .then(response => response)
+            .catch(_error => {
+              return false;
+            });
           if (!isValid) {
             return reject('Invalid username or password');
           }
-          let token = Auth.signin(user.id, username);
+          let token = Auth.signin(user.id, username, user.role);
           resolve({
             id: user.id,
             token,
+            role: user.role,
           });
         } catch (err) {
           console.log({ err });

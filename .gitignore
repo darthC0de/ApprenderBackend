@@ -4,5 +4,7 @@ build/
 *.zip
 logs/
 yarn*log
+yarn.lock
+package-lock.json
 .env
 *.sqlite3
