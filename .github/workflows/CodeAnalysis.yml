@@ -2,7 +2,7 @@ name: 'Scan code and validate build'
 
 on:
   push:
-    branches: ['master', 'feat/**', 'bug/**', 'develop']
+    branches: ['master', 'lib']
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [master]
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: 14.x
           cache: 'npm'

@@ -6,14 +6,14 @@ labels: 'enhancement'
 assignees: ''
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Feature description
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+Place here some description about your feature, what's it about. Does it solves any known issue?
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+### Feature changelog
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+What does your feature changes? What is included, changed or removed with this new feature?
+
+### Additional Context
+
+Add bellow any link or reference related to the feature.
