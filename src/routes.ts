@@ -8,6 +8,7 @@ import {
   TypesController,
   QuestionController,
   RolesController,
+  ParametersController,
 } from './controllers';
 
 routes.get('/', (_req: Request, res: Response) => {
@@ -21,6 +22,7 @@ const users = new UserController();
 const types = new TypesController();
 const questions = new QuestionController();
 const roles = new RolesController();
+const parameters = new ParametersController();
 
 const { validateBase64Data, validateParams } = Validations.default;
 
@@ -52,6 +54,11 @@ routes.get('/roles', Auth.isAuthenticated, roles.listAll);
 routes.post('/roles', Auth.isAuthenticated, roles.create);
 routes.put('/roles/:id', Auth.isAuthenticated, roles.update);
 routes.delete('/roles/:id', Auth.isAuthenticated, roles.delete);
+
+routes.get('/parameters', Auth.isAuthenticated, parameters.listAll);
+routes.post('/parameters', Auth.isAuthenticated, parameters.create);
+routes.put('/parameters/:id', Auth.isAuthenticated, parameters.update);
+routes.delete('/parameters/:id', Auth.isAuthenticated, parameters.delete);
 
 routes.get('/questions', questions.getQuestions);
 routes.get('/questions/:id', questions.getQuestion);

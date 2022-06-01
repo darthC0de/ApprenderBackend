@@ -1,8 +1,9 @@
-import { IFieldError } from './interfaces';
+/* eslint-disable import/extensions */
 import { createLogger, format, transports, Logger } from 'winston';
+import { IFieldError } from './interfaces';
 import 'winston-daily-rotate-file';
 
-export interface IFieldValidation<T> {
+export interface iFieldValidation<T> {
   /** Field name for validation */
   name: string;
   /** Field for type validation.
@@ -19,8 +20,12 @@ export interface IFieldValidation<T> {
    *
    * Receives field data and must return an object containing result and message. */
   validator?: (field: T) => { result: boolean; message?: string };
-  /** Validates if field is required or not*/
+  /** Validates if field is required or not */
   required?: boolean;
+}
+
+interface iObject extends Object {
+  [key: string]: any;
 }
 
 /**
@@ -29,11 +34,11 @@ export interface IFieldValidation<T> {
  * @param {any} data
  */
 export function validateFields<T>(
-  fields: IFieldValidation<T>[],
+  fields: iFieldValidation<T>[],
   data: any,
-): { hasMissing: boolean; errors?: IFieldError[] } {
-  const errors: IFieldError[] = [];
-  fields.forEach((field: IFieldValidation<T>) => {
+): { hasMissing: boolean; errors?: iFieldError[] } {
+  const errors: iFieldError[] = [];
+  fields.forEach((field: iFieldValidation<T>) => {
     const required = field.required === false ? field.required : true;
 
     if (!data[field.name] && required === true) {
@@ -51,17 +56,16 @@ export function validateFields<T>(
         logger.error(validation.message);
         errors.push({
           campo: field.name,
-          mensagem: validation.message,
+          mensagem: validation.message
+            ? validation.message
+            : `Failure on ${field.name}`,
         });
       }
       return;
     }
-
-    if (
-      data[field.name] &&
-      field.type === 'number' &&
-      isNaN(data[field.name])
-    ) {
+    const is_field_number =
+      data[field.name] && field.type === 'number' && isNaN(data[field.name]);
+    if (is_field_number) {
       logger.error(`O campo ${field.name} deve ser do tipo Number`);
       errors.push({
         campo: field.name,
@@ -72,7 +76,8 @@ export function validateFields<T>(
     const is_field_string =
       data[field.name] &&
       field.type === 'string' &&
-      typeof data[field.name] !== 'string';
+      typeof data[field.name] !== 'string' &&
+      data[field.name] !== '';
 
     if (is_field_string) {
       logger.error(`O campo ${field.name} deve ser do tipo string`);
@@ -83,7 +88,16 @@ export function validateFields<T>(
       return;
     }
 
-    if (data[field.name] && field.type === 'array') {
+    const is_array = data[field.name] && field.type === 'array';
+    if (is_array) {
+      if (data[field.name] && data[field.name].length === 0) {
+        logger.error(`O campo ${field.name} não deve ser vazio`);
+        errors.push({
+          campo: field.name,
+          mensagem: `O campo ${field.name} não deve ser vazio`,
+        });
+        return;
+      }
       if (!Array.isArray(data[field.name])) {
         logger.error(`O campo ${field.name} deve ser um array`);
         errors.push({
@@ -108,7 +122,7 @@ export function validateFields<T>(
 
       if (field.arrayItems && field.arrayItems === 'string') {
         const is_valid = data[field.name].filter(
-          (item: any) => typeof item != 'string',
+          (item: any) => typeof item != 'string' || item === '',
         );
         if (is_valid.length > 0) {
           logger.error(
@@ -126,6 +140,30 @@ export function validateFields<T>(
   return { hasMissing: errors.length > 0, errors: errors };
 }
 
+/**
+ * Transforms object keys to lowercase
+ * @param {Array} data *-> Array of objects to pass or object to be passed*
+ * */
+export function minimizer(
+  data: Array<iObject> | iObject,
+): Array<iObject> | iObject {
+  if (Array.isArray(data)) {
+    return data.map(item =>
+      Object.fromEntries(
+        Object.entries(item).map(pair => [
+          pair[0].toLowerCase(),
+          pair[1] === -1 ? '-' : pair[1],
+        ]),
+      ),
+    );
+  }
+  return Object.fromEntries(
+    Object.entries(data).map(pair => [
+      pair[0].toLowerCase(),
+      pair[1] === -1 ? '-' : pair[1],
+    ]),
+  );
+}
 export const logger: Logger = createLogger({
   level: 'info',
   transports: [
