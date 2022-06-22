@@ -51,6 +51,11 @@ jobs:
           cache: 'yarn'
       - run: yarn
       - run: yarn build
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   Audit:
     runs-on: ubuntu-latest
     steps:
