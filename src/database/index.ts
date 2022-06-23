@@ -1,6 +1,10 @@
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable import/extensions */
 import knex, { Knex } from 'knex';
-import configuration from '../../knexfile';
 import dotenv from 'dotenv';
+import configuration from '../../knexfile';
+
 dotenv.config();
 
 // @ts-ignore

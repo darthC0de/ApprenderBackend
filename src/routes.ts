@@ -1,7 +1,8 @@
+/* eslint-disable indent */
+/* eslint-disable import/extensions */
 import { Router, Request, Response } from 'express';
 import { version } from '../package.json';
 import { Auth, Validations } from './middlewares';
-const routes = Router();
 
 import {
   UserController,
@@ -10,6 +11,8 @@ import {
   RolesController,
   ParametersController,
 } from './controllers';
+
+const routes = Router();
 
 routes.get('/', (_req: Request, res: Response) => {
   return res.status(200).json({
@@ -61,7 +64,15 @@ routes.put('/parameters/:id', Auth.isAuthenticated, parameters.update);
 routes.delete('/parameters/:id', Auth.isAuthenticated, parameters.delete);
 
 routes.get('/questions', questions.getQuestions);
+routes.get(
+  '/questions/pending',
+  Auth.isAuthenticated,
+  questions.getUnapprovedQuestions,
+);
 routes.get('/questions/:id', questions.getQuestion);
 routes.post('/questions', Auth.isAuthenticated, questions.create);
+routes.patch('/questions', Auth.isAuthenticated, questions.update);
+routes.delete('/questions/:id', Auth.isAuthenticated, questions.delete);
+routes.get('/approve/:id', Auth.isAuthenticated, questions.approve);
 
 export default routes;

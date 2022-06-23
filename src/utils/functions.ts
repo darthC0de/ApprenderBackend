@@ -1,8 +1,34 @@
+/* eslint-disable import/export */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable indent */
 /* eslint-disable import/extensions */
 import { createLogger, format, transports, Logger } from 'winston';
 import { IFieldError } from './interfaces';
 import 'winston-daily-rotate-file';
 
+export const logger: Logger = createLogger({
+  level: 'info',
+  transports: [
+    new transports.Console({
+      level: 'verbose',
+      format: format.combine(format.colorize(), format.simple()),
+    }),
+    new transports.DailyRotateFile({
+      filename: './logs/%DATE%_logs.log',
+      level: 'debug',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d',
+      format: format.json(),
+    }),
+  ],
+});
+
+export interface IFieldValidationResponse {
+  hasMissing: boolean;
+  errors?: IFieldError[];
+}
 export interface iFieldValidation<T> {
   /** Field name for validation */
   name: string;
@@ -36,8 +62,8 @@ interface iObject extends Object {
 export function validateFields<T>(
   fields: iFieldValidation<T>[],
   data: any,
-): { hasMissing: boolean; errors?: iFieldError[] } {
-  const errors: iFieldError[] = [];
+): { hasMissing: boolean; errors?: IFieldError[] } {
+  const errors: IFieldError[] = [];
   fields.forEach((field: iFieldValidation<T>) => {
     const required = field.required === false ? field.required : true;
 
@@ -144,9 +170,7 @@ export function validateFields<T>(
  * Transforms object keys to lowercase
  * @param {Array} data *-> Array of objects to pass or object to be passed*
  * */
-export function minimizer(
-  data: Array<iObject> | iObject,
-): Array<iObject> | iObject {
+export function minimizer(data: Array<iObject> | iObject): Array<any> | any {
   if (Array.isArray(data)) {
     return data.map(item =>
       Object.fromEntries(
@@ -164,20 +188,3 @@ export function minimizer(
     ]),
   );
 }
-export const logger: Logger = createLogger({
-  level: 'info',
-  transports: [
-    new transports.Console({
-      level: 'verbose',
-      format: format.combine(format.colorize(), format.simple()),
-    }),
-    new transports.DailyRotateFile({
-      filename: './logs/%DATE%_logs.log',
-      level: 'debug',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '14d',
-      format: format.json(),
-    }),
-  ],
-});

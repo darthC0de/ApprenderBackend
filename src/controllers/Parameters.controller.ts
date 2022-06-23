@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ParameterService } from '../services';
+import ParameterService from '../services';
 import { validateFields } from '../utils';
 
 export class ParametersController {
@@ -20,6 +20,7 @@ export class ParametersController {
       return res.status(500).json({ error });
     }
   }
+
   async create(req: Request, res: Response) {
     const services = new ParameterService();
     try {
@@ -32,11 +33,11 @@ export class ParametersController {
           },
           {
             name: 'value',
-            validator:(field: any)=>{
-              if(typeof field ==='string' || isNaN(field)){
-                return {result:true}
+            validator: (field: any) => {
+              if (typeof field === 'string' || isNaN(field)) {
+                return { result: true };
               }
-              return {result:false}
+              return { result: false };
             },
             required: false,
           },
@@ -60,6 +61,7 @@ export class ParametersController {
       return res.status(500).json({ error });
     }
   }
+
   async update(req: Request, res: Response) {
     const services = new ParameterService();
     try {
@@ -96,6 +98,7 @@ export class ParametersController {
       return res.status(500).json({ error });
     }
   }
+
   async delete(req: Request, res: Response) {
     const services = new ParameterService();
     try {

@@ -20,6 +20,7 @@ export class TypesController {
       return res.status(500).json({ error });
     }
   }
+
   async create(req: Request, res: Response) {
     const services = new TypesServices();
     try {
@@ -50,6 +51,7 @@ export class TypesController {
       return res.status(500).json({ error });
     }
   }
+
   async update(req: Request, res: Response) {
     const services = new TypesServices();
     try {
@@ -86,6 +88,7 @@ export class TypesController {
       return res.status(500).json({ error });
     }
   }
+
   async delete(req: Request, res: Response) {
     const services = new TypesServices();
     try {

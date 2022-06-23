@@ -8,13 +8,14 @@ export class UserController {
     await service
       .listAll()
       .then(response => {
-        if (!response.length) return res.status(204).json();
+        if (response.length === 0) return res.status(204).json();
         return res.status(200).json(response);
       })
       .catch(err => {
         return res.status(400).json({ error: err });
       });
   }
+
   async getUser(req: Request, res: Response) {
     const service = new UserService();
     const fields = validateFields(
@@ -40,6 +41,7 @@ export class UserController {
         return res.status(400).json({ error: err });
       });
   }
+
   async login(req: Request, res: Response) {
     const service = new UserService();
     const fields = validateFields(
@@ -71,6 +73,7 @@ export class UserController {
         return res.status(400).json({ error: err });
       });
   }
+
   async create(req: Request, res: Response) {
     try {
       const service = new UserService();
@@ -127,6 +130,7 @@ export class UserController {
       return res.status(400).json({ error: err });
     }
   }
+
   async update(req: Request, res: Response) {
     try {
       const service = new UserService();
@@ -187,6 +191,7 @@ export class UserController {
       return res.status(400).json({ error: err });
     }
   }
+
   async delete(req: Request, res: Response) {
     try {
       const service = new UserService();

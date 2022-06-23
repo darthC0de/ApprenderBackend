@@ -1,5 +1,5 @@
-import { Conn } from '../database';
 import { v4 as uuid } from 'uuid';
+import { Conn } from '../database';
 import { UserService } from './users.service';
 
 export interface IRoles {
@@ -26,6 +26,7 @@ export class RolesServices {
       }
     });
   }
+
   async findById(id: string) {
     return new Promise<IRoles>(async (resolve, reject) => {
       try {
@@ -42,6 +43,7 @@ export class RolesServices {
       }
     });
   }
+
   async create(description: string, author: string) {
     return new Promise<IRoles>(async (resolve, reject) => {
       try {
@@ -80,6 +82,7 @@ export class RolesServices {
       }
     });
   }
+
   async update(id: string, description: string, author: string) {
     return new Promise<IRoles>(async (resolve, reject) => {
       try {
@@ -119,6 +122,7 @@ export class RolesServices {
       }
     });
   }
+
   async delete(id: string) {
     return new Promise(async (resolve, reject) => {
       try {

@@ -1,8 +1,17 @@
-import { Conn } from '../database';
+/* eslint-disable import/extensions */
+/* eslint-disable no-console */
+/* eslint-disable consistent-return */
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-promise-executor-return */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable indent */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { v4 as uuid } from 'uuid';
+import { Conn } from '../database';
 import { Encrypt } from '../utils';
 import { Auth } from '../middlewares';
-import { ParameterService } from './';
+import { ParameterService } from '.';
 
 export interface IUser {
   id?: any;
@@ -37,6 +46,7 @@ export class UserService {
         });
     });
   }
+
   public async findById(id: string) {
     return new Promise<IUser>(async (resolve, reject) => {
       await Conn('users')
@@ -60,6 +70,7 @@ export class UserService {
         });
     });
   }
+
   public async findByUser(username: string) {
     return new Promise<IUser>(async (resolve, reject) => {
       await Conn('users')
@@ -83,6 +94,7 @@ export class UserService {
         });
     });
   }
+
   public async create(
     name: string,
     username: string,
@@ -94,7 +106,11 @@ export class UserService {
     return new Promise<IUser>(async (resolve, reject) => {
       const parameters = new ParameterService();
       try {
-        let userRole: string;
+        const userRole = await parameters
+          .findByDescription('Default user role')
+          .then((response: any) => {
+            return response.value;
+          });
         const user = await Conn('users')
           .select('*')
           .where('email', email)
@@ -105,7 +121,7 @@ export class UserService {
           })
           .catch((err: Error) => reject(err.message));
         if (user) {
-          return reject('usuário já cadastrado');
+          return reject(new Error('usuário já cadastrado'));
         }
 
         const id = uuid();
@@ -117,15 +133,9 @@ export class UserService {
             email,
             password,
             avatar,
-            role: role
-              ? role
-              : await parameters
-                  .findByDescription('Default user role')
-                  .then(response => {
-                    userRole = String(response.value);
-                  }),
+            role: role || userRole,
           })
-          .then(async (_response: any) => {
+          .then(async () => {
             const details = await this.findById(id);
             resolve(details);
           })
@@ -135,6 +145,7 @@ export class UserService {
       }
     });
   }
+
   public async update(
     id: string,
     name?: string,
@@ -163,9 +174,9 @@ export class UserService {
           });
 
         if (!user) {
-          return reject('User not found');
+          return reject(new Error('User not found'));
         }
-        const updated_at = new Date().toISOString();
+        const updatedAt = new Date().toISOString();
         return await Conn('users')
           .update({
             name,
@@ -174,10 +185,10 @@ export class UserService {
             password,
             avatar,
             role,
-            updated_at,
+            updated_at: updatedAt,
           })
           .where({ id })
-          .then((_response: any) => resolve(''))
+          .then(() => resolve(''))
           .catch((err: Error) => {
             console.log({ err });
             return reject(err.message);
@@ -188,6 +199,7 @@ export class UserService {
       }
     });
   }
+
   public async delete(id: string) {
     return new Promise<any>(async (resolve, reject) => {
       try {
@@ -198,18 +210,19 @@ export class UserService {
           .then((response: any) => response)
           .catch((err: Error) => reject(err.message));
         if (!user || !user.length) {
-          return reject('Invalid username');
+          return reject(new Error('Invalid username'));
         }
         await Conn('users')
           .where({ id })
           .delete()
-          .then((_response: any) => resolve(''))
+          .then(() => resolve(''))
           .catch((err: Error) => reject(err.message));
       } catch (err) {
         reject(err);
       }
     });
   }
+
   public async authenticate(username: string, password: string) {
     return new Promise<{ id: string; token: string; role: string }>(
       async (resolve, reject) => {
@@ -221,19 +234,19 @@ export class UserService {
             .then((response: any) => response)
             .catch((err: Error) => reject(err.message));
           if (!user) {
-            return reject('Invalid username');
+            return reject(new Error('Invalid username'));
           }
           const cript = new Encrypt();
           const isValid: boolean = await cript
             .compare(password, user.password)
             .then(response => response)
-            .catch(_error => {
+            .catch(() => {
               return false;
             });
           if (!isValid) {
-            return reject('Invalid username or password');
+            return reject(new Error('Invalid username or password'));
           }
-          let token = Auth.signin(user.id, username, user.role);
+          const token = Auth.signin(user.id, username, user.role);
           resolve({
             id: user.id,
             token,

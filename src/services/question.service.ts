@@ -1,5 +1,16 @@
-import { Conn } from '../database';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-promise-executor-return */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable camelcase */
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable no-console */
+/* eslint-disable consistent-return */
+/* eslint-disable indent */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable import/extensions */
 import { v4 as uuid } from 'uuid';
+import { Conn } from '../database';
 import { TypesServices, UserService } from '.';
 
 export interface IQuestions {
@@ -8,6 +19,7 @@ export interface IQuestions {
   answer: string;
   type: string;
   options?: string;
+  approved_by?: string;
   created_by?: string;
   updated_by?: string;
   created_at?: string;
@@ -18,32 +30,57 @@ export class QuestionServices {
     return new Promise<IQuestions[]>(async (resolve, reject) => {
       try {
         await Conn('questions')
-          .select('*')
+          .select(
+            'id',
+            'question',
+            'answer',
+            'type',
+            'options',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+            'approved_by',
+          )
+          .whereNotNull('approved_by')
           .then(response => {
             resolve(response);
           })
-          .catch((error: Error) => reject(error.message));
+          .catch((error: Error) => reject(error));
       } catch (err) {
         reject(err);
       }
     });
   }
+
   async question(id: string) {
     return new Promise<IQuestions>(async (resolve, reject) => {
       try {
         await Conn('questions')
-          .select('*')
+          .select(
+            'id',
+            'question',
+            'answer',
+            'type',
+            'options',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+            'approved_by',
+          )
           .where({ id })
           .first()
           .then(response => {
             resolve(response);
           })
-          .catch((error: Error) => reject(error.message));
+          .catch((error: Error) => reject(error));
       } catch (err) {
         reject(err);
       }
     });
   }
+
   async createQuestion(
     question: string,
     answer: string,
@@ -55,19 +92,15 @@ export class QuestionServices {
       try {
         const userService = new UserService();
         const typesService = new TypesServices();
-        const valid_user = await userService
+        await userService
           .findById(created_by)
-          .then(response => response);
-        console.log(valid_user);
-        if (!valid_user) {
-          return reject('Invalid user');
-        }
-        const valid_type = await typesService
+          .catch(() => reject(new Error('Invalid user')));
+
+        await typesService
           .findById(type)
-          .then(response => response);
-        if (!valid_type) {
-          return reject('Invalid type');
-        }
+          .catch(() => reject(new Error('Invalid type')));
+
+        console.log('got here');
         const id = uuid();
         await Conn('questions')
           .insert({
@@ -78,15 +111,25 @@ export class QuestionServices {
             created_by,
             options,
           })
-          .then(async _response => {
-            await this.question(id).then(response => resolve(response));
+          .then(async () => {
+            await this.question(id)
+              .then(response => resolve(response))
+              .catch((error: Error) => {
+                console.log(error);
+                reject(error);
+              });
           })
-          .catch((error: Error) => reject(error.message));
+          .catch((error: Error) => {
+            console.log(error);
+            reject(error);
+          });
       } catch (err) {
+        console.log(err);
         reject(err);
       }
     });
   }
+
   async updateQuestion(
     id: string,
     question: string,
@@ -104,20 +147,20 @@ export class QuestionServices {
           response => response,
         );
         if (!valid_question) {
-          return reject('Invalid question ID');
+          return reject(new Error('Invalid question ID'));
         }
         const valid_user = await userService
           .findById(updated_by)
           .then(response => response);
         console.log(valid_user);
         if (!valid_user) {
-          return reject('Invalid user');
+          return reject(new Error('Invalid user'));
         }
         const valid_type = await typesService
           .findById(type)
           .then(response => response);
         if (!valid_type) {
-          return reject('Invalid type');
+          return reject(new Error('Invalid type'));
         }
         const updated_at = new Date();
         await Conn('questions')
@@ -130,15 +173,80 @@ export class QuestionServices {
             updated_at,
             options,
           })
-          .then(async _response => {
+          .then(async () => {
             await this.question(id).then(response => resolve(response));
           })
-          .catch((error: Error) => reject(error.message));
+          .catch((error: Error) => reject(error));
       } catch (err) {
         reject(err);
       }
     });
   }
+
+  async unapprovedQuestions() {
+    return new Promise<IQuestions[]>(async (resolve, reject) => {
+      try {
+        await Conn('questions')
+          .select(
+            'id',
+            'question',
+            'answer',
+            'type',
+            'options',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
+            'approved_by',
+          )
+          .whereNull('approved_by')
+          .then(response => {
+            resolve(response);
+          })
+          .catch((error: Error) => reject(error));
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  async approveQuestion(id: string, approver: string) {
+    return new Promise<IQuestions>(async (resolve, reject) => {
+      try {
+        const userService = new UserService();
+
+        const valid_question = await this.question(id).then(
+          response => response,
+        );
+        if (!valid_question || valid_question.approved_by !== null) {
+          return reject(new Error('Invalid question ID'));
+        }
+        const valid_user = await userService
+          .findById(approver)
+          .then(response => response);
+
+        if (!valid_user) {
+          return reject(new Error('Invalid user'));
+        }
+
+        const updated_at = new Date();
+        await Conn('questions')
+          .update({
+            approved_by: approver,
+            updated_by: approver,
+            updated_at,
+          })
+          .where({ id })
+          .then(async () => {
+            await this.question(id).then(response => resolve(response));
+          })
+          .catch((error: Error) => reject(error));
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
   async deleteQuestion(id: string) {
     return new Promise<any>(async (resolve, reject) => {
       try {
@@ -146,10 +254,10 @@ export class QuestionServices {
           .where({ id })
           .first()
           .delete()
-          .then(_response => {
+          .then(() => {
             resolve('');
           })
-          .catch((error: Error) => reject(error.message));
+          .catch((error: Error) => reject(error));
       } catch (err) {
         reject(err);
       }

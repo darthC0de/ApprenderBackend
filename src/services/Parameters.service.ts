@@ -1,5 +1,9 @@
-import { Conn } from '../database';
+/* eslint-disable indent */
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable import/prefer-default-export */
 import { v4 as uuid } from 'uuid';
+import { Conn } from '../database';
 import { UserService } from './users.service';
 
 interface IParam {
@@ -27,6 +31,7 @@ export class ParameterService {
       }
     });
   }
+
   async findById(id: string) {
     return new Promise<IParam>(async (resolve, reject) => {
       try {
@@ -43,6 +48,7 @@ export class ParameterService {
       }
     });
   }
+
   async findByDescription(description: string) {
     return new Promise<IParam>(async (resolve, reject) => {
       try {
@@ -59,6 +65,7 @@ export class ParameterService {
       }
     });
   }
+
   async create(description: string, author: string, value?: string | number) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -87,6 +94,7 @@ export class ParameterService {
       }
     });
   }
+
   async update(id: string, description: string, author: string) {
     return new Promise<IParam>(async (resolve, reject) => {
       try {
@@ -127,6 +135,7 @@ export class ParameterService {
       }
     });
   }
+
   async delete(id: string) {
     return new Promise(async (resolve, reject) => {
       try {
