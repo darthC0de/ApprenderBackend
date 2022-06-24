@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable indent */
+/* eslint-disable consistent-return */
+/* eslint-disable class-methods-use-this */
 import { Request, Response } from 'express';
-import ParameterService from '../services';
+import { ParameterService } from '../services';
 import { validateFields } from '../utils';
 
+// eslint-disable-next-line import/prefer-default-export
 export class ParametersController {
   async listAll(_req: Request, res: Response) {
     const services = new ParameterService();
@@ -15,8 +20,6 @@ export class ParametersController {
           return res.status(400).json({ error: err });
         });
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({ error });
     }
   }
@@ -33,12 +36,6 @@ export class ParametersController {
           },
           {
             name: 'value',
-            validator: (field: any) => {
-              if (typeof field === 'string' || isNaN(field)) {
-                return { result: true };
-              }
-              return { result: false };
-            },
             required: false,
           },
         ],
@@ -119,7 +116,7 @@ export class ParametersController {
       const { id } = data;
       await services
         .delete(id)
-        .then(_response => {
+        .then(() => {
           return res.status(204).json();
         })
         .catch(err => {
