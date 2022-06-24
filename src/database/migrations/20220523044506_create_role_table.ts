@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('roles', table => {
     table.string('id').notNullable().primary();
-    table.string('role').notNullable();
+    table.string('description').notNullable();
     table.string('created_by').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table
@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
       .references('users.id')
       .onUpdate('SET NULL')
       .onDelete('SET NULL');
-    table.index(['id', 'role'], 'IDX_ROLE_ID');
+    table.index(['id', 'description'], 'IDX_ROLE_ID');
   });
 }
 

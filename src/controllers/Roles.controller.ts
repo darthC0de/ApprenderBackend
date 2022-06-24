@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { TypesServices } from '../services';
+import { RolesServices } from '../services';
 import { validateFields } from '../utils';
 
-export class TypesController {
+export class RolesController {
   async listAll(_req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new RolesServices();
     try {
       await services
         .findAll()
@@ -22,7 +22,7 @@ export class TypesController {
   }
 
   async create(req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new RolesServices();
     try {
       const fields = validateFields(
         [
@@ -53,7 +53,7 @@ export class TypesController {
   }
 
   async update(req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new RolesServices();
     try {
       const data = { ...req.body, ...req.params, ...req.headers };
       const fields = validateFields(
@@ -90,7 +90,7 @@ export class TypesController {
   }
 
   async delete(req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new RolesServices();
     try {
       const data = { ...req.body, ...req.params };
       const fields = validateFields(

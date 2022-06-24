@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-export function signin(id: string, username: string) {
-  return jwt.sign({ id, username }, String(process.env.APP_SECRET), {
+export function signin(id: string, username: string, role: string) {
+  return jwt.sign({ id, username, role }, String(process.env.APP_SECRET), {
     expiresIn: '15 days',
   });
 }
@@ -31,6 +31,7 @@ export function isAuthenticated(
 
       req.headers.user = decoded.id;
       req.headers.username = decoded.username;
+      req.headers.role = decoded.role;
 
       next();
     },

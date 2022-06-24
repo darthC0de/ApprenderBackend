@@ -2,9 +2,11 @@ import bcrypt from 'bcryptjs';
 
 class Encrypt {
   private saltRounds: number;
+
   constructor() {
     this.saltRounds = 10;
   }
+
   async cript(pwd: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       await bcrypt
@@ -17,6 +19,7 @@ class Encrypt {
         });
     });
   }
+
   async compare(pwd: string, hash: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       await bcrypt

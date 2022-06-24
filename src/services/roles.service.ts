@@ -2,18 +2,18 @@ import { v4 as uuid } from 'uuid';
 import { Conn } from '../database';
 import { UserService } from './users.service';
 
-export interface ITypes {
+export interface IRoles {
   id: string;
   description?: string;
   created_by?: string;
   created_at?: string;
 }
 
-export class TypesServices {
+export class RolesServices {
   async findAll() {
-    return new Promise<ITypes[]>(async (resolve, reject) => {
+    return new Promise<IRoles[]>(async (resolve, reject) => {
       try {
-        await Conn('types')
+        await Conn('roles')
           .select('*')
           .then(response => {
             resolve(response);
@@ -28,9 +28,9 @@ export class TypesServices {
   }
 
   async findById(id: string) {
-    return new Promise<ITypes>(async (resolve, reject) => {
+    return new Promise<IRoles>(async (resolve, reject) => {
       try {
-        await Conn('types')
+        await Conn('roles')
           .select('*')
           .where({ id })
           .first()
@@ -45,7 +45,7 @@ export class TypesServices {
   }
 
   async create(description: string, author: string) {
-    return new Promise<ITypes>(async (resolve, reject) => {
+    return new Promise<IRoles>(async (resolve, reject) => {
       try {
         const userService = new UserService();
         const user = await userService
@@ -55,7 +55,7 @@ export class TypesServices {
         if (!user) {
           return;
         }
-        const description_not_used = await Conn('types')
+        const descriptionNotUsed = await Conn('roles')
           .select('*')
           .where({ description })
           .first()
@@ -63,11 +63,11 @@ export class TypesServices {
             return response;
           })
           .catch((err: Error) => reject(err.message));
-        if (description_not_used && description_not_used.length) {
+        if (descriptionNotUsed && descriptionNotUsed.length) {
           return reject('Description already used');
         }
         const id = uuid();
-        await Conn('types')
+        await Conn('roles')
           .insert({
             id,
             description,
@@ -84,10 +84,10 @@ export class TypesServices {
   }
 
   async update(id: string, description: string, author: string) {
-    return new Promise<ITypes>(async (resolve, reject) => {
+    return new Promise<IRoles>(async (resolve, reject) => {
       try {
-        const valid_type = await this.findById(id).then(response => response);
-        if (!valid_type) return reject('Invalid type ID');
+        const validRole = await this.findById(id).then(response => response);
+        if (!validRole) return reject('Invalid role ID');
         const userService = new UserService();
         const user = await userService
           .findById(author)
@@ -96,7 +96,7 @@ export class TypesServices {
         if (!user) {
           return;
         }
-        const description_not_used = await Conn('types')
+        const descriptionNotUsed = await Conn('roles')
           .select('*')
           .where({ description })
           .first()
@@ -104,10 +104,10 @@ export class TypesServices {
             return response;
           })
           .catch((err: Error) => reject(err.message));
-        if (description_not_used && description_not_used.length) {
+        if (descriptionNotUsed && descriptionNotUsed.length) {
           return reject('Description already used');
         }
-        await Conn('types')
+        await Conn('roles')
           .update({
             description,
             created_by: author,
@@ -126,9 +126,9 @@ export class TypesServices {
   async delete(id: string) {
     return new Promise(async (resolve, reject) => {
       try {
-        const valid_type = await this.findById(id).then(response => response);
-        if (!valid_type) return reject('Invalid type ID');
-        await Conn('types')
+        const validType = await this.findById(id).then(response => response);
+        if (!validType) return reject('Invalid role ID');
+        await Conn('roles')
           .where({ id })
           .first()
           .delete()

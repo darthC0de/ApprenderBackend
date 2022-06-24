@@ -6,35 +6,26 @@ labels: bug
 assignees: ''
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Bug description
 
-**To Reproduce**
-Steps to reproduce the behavior:
+Place here some description about the bug you identified, what were you doing when it occured?
 
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## Environment
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+- **Lib Version**:
+- **OS**:
+- **Node version**:
+- **React version**: `if applicable`
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+### Repro steps
 
-**Desktop (please complete the following information):**
+Describe how to reproduce the bug, what you were working on and the steps you made to confirm the bug
 
-- OS: [e.g. iOS]
-- Browser [e.g. chrome, safari]
-- Version [e.g. 22]
+<!--
+Quick tip:
+ It's preferable to use a todo list format (like Environment section) but you're allowed to describe it as a text, be sure to be crystal clear about the information and steps, so we can figure out what happened.
+ -->
 
-**Smartphone (please complete the following information):**
+### Additional Context
 
-- Device: [e.g. iPhone6]
-- OS: [e.g. iOS8.1]
-- Browser [e.g. stock browser, safari]
-- Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+Add bellow any link or reference related to the bug.

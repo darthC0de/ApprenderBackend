@@ -8,13 +8,14 @@ export class UserController {
     await service
       .listAll()
       .then(response => {
-        if (!response.length) return res.status(204).json();
+        if (response.length === 0) return res.status(204).json();
         return res.status(200).json(response);
       })
       .catch(err => {
         return res.status(400).json({ error: err });
       });
   }
+
   async getUser(req: Request, res: Response) {
     const service = new UserService();
     const fields = validateFields(
@@ -40,6 +41,7 @@ export class UserController {
         return res.status(400).json({ error: err });
       });
   }
+
   async login(req: Request, res: Response) {
     const service = new UserService();
     const fields = validateFields(
@@ -61,11 +63,9 @@ export class UserController {
       return res.status(400).json(fields.errors);
     }
     const { username, password } = req.body;
-    const cript = new Encrypt();
-    const pwd = await cript.cript(password).then(response => response);
 
     await service
-      .authenticate(username, pwd)
+      .authenticate(username, password)
       .then(response => {
         return res.status(200).json(response);
       })
@@ -73,6 +73,7 @@ export class UserController {
         return res.status(400).json({ error: err });
       });
   }
+
   async create(req: Request, res: Response) {
     try {
       const service = new UserService();
@@ -103,17 +104,22 @@ export class UserController {
             type: 'string',
             required: false,
           },
+          {
+            name: 'role',
+            type: 'string',
+            required: false,
+          },
         ],
         req.body,
       );
       if (fields.hasMissing) {
         return res.status(400).json(fields.errors);
       }
-      const { username, password, email, name, avatar } = req.body;
+      const { username, password, email, name, avatar, role } = req.body;
       const cript = new Encrypt();
       const pwd = await cript.cript(password).then(response => response);
       await service
-        .create(name, username, email, pwd, avatar)
+        .create(name, username, email, pwd, avatar, role)
         .then(response => {
           return res.status(201).json(response);
         })
@@ -124,6 +130,7 @@ export class UserController {
       return res.status(400).json({ error: err });
     }
   }
+
   async update(req: Request, res: Response) {
     try {
       const service = new UserService();
@@ -154,20 +161,25 @@ export class UserController {
             type: 'string',
             required: false,
           },
+          {
+            name: 'role',
+            type: 'string',
+            required: false,
+          },
         ],
         req.body,
       );
       if (fields.hasMissing) {
         return res.status(400).json(fields.errors);
       }
-      const { username, password, email, name, avatar } = req.body;
+      const { username, password, email, name, avatar, role } = req.body;
       const { user } = req.headers;
       const cript = new Encrypt();
       const pwd = password
         ? await cript.cript(password).then(response => response)
         : undefined;
       await service
-        .update(String(user), name, username, email, pwd, avatar)
+        .update(String(user), name, username, email, pwd, avatar, role)
         .then(_response => {
           return res.status(204).json();
         })
@@ -179,6 +191,7 @@ export class UserController {
       return res.status(400).json({ error: err });
     }
   }
+
   async delete(req: Request, res: Response) {
     try {
       const service = new UserService();

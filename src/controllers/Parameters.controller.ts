@@ -1,10 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable indent */
+/* eslint-disable consistent-return */
+/* eslint-disable class-methods-use-this */
 import { Request, Response } from 'express';
-import { TypesServices } from '../services';
+import { ParameterService } from '../services';
 import { validateFields } from '../utils';
 
-export class TypesController {
+// eslint-disable-next-line import/prefer-default-export
+export class ParametersController {
   async listAll(_req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new ParameterService();
     try {
       await services
         .findAll()
@@ -15,14 +20,12 @@ export class TypesController {
           return res.status(400).json({ error: err });
         });
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({ error });
     }
   }
 
   async create(req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new ParameterService();
     try {
       const fields = validateFields(
         [
@@ -30,6 +33,10 @@ export class TypesController {
             name: 'description',
             type: 'string',
             required: true,
+          },
+          {
+            name: 'value',
+            required: false,
           },
         ],
         req.body,
@@ -53,7 +60,7 @@ export class TypesController {
   }
 
   async update(req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new ParameterService();
     try {
       const data = { ...req.body, ...req.params, ...req.headers };
       const fields = validateFields(
@@ -90,7 +97,7 @@ export class TypesController {
   }
 
   async delete(req: Request, res: Response) {
-    const services = new TypesServices();
+    const services = new ParameterService();
     try {
       const data = { ...req.body, ...req.params };
       const fields = validateFields(
@@ -109,7 +116,7 @@ export class TypesController {
       const { id } = data;
       await services
         .delete(id)
-        .then(_response => {
+        .then(() => {
           return res.status(204).json();
         })
         .catch(err => {

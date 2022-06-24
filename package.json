@@ -8,8 +8,11 @@
     "prebuild": "npm test && rimraf build",
     "build": "npx tsc -b",
     "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
+    "pretest":"cross-env NODE_ENV=test npx knex migrate:latest",
     "test": "jest --colors",
-    "prettier": "prettier --write ."
+    "posttest":"rimraf ./src/database/test.sqlite3",
+    "lint": "eslint --ignore-path .eslintignore --fix --ext .ts,.tsx,.js,.jsx .",
+    "prettier": "prettier --ignore-path .eslintignore --write ."
   },
   "repository": {
     "type": "git",
@@ -50,6 +53,9 @@
     "@types/node": "17.0.35",
     "@types/supertest": "2.0.12",
     "@types/uuid": "8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.2",
     "@typescript-eslint/parser": "5.27.0",
     "cross-env": "7.0.3",
     "eslint": "8.17.0",
